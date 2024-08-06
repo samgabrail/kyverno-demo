@@ -13,6 +13,8 @@ helm install kyverno-policies kyverno/kyverno-policies -n kyverno
 
 ## Validation
 
+Validation stands as the cornerstone of policy implementation, operating as a binary decision-making mechanism. This process efficiently categorizes resources into two distinct outcomes: compliant resources receive approval and proceed unhindered, while non-compliant resources face rejection. This clear-cut "yes" or "no" approach ensures strict adherence to defined policies, maintaining the integrity and security of the Kubernetes environment. Now let's see it in action.
+
 Apply the validation policy.
 
 ```bash
@@ -169,6 +171,8 @@ Events:   <none>
 
 ## Mutation
 
+Mutation empowers Kyverno to dynamically alter resources before their admission to the cluster. This powerful feature allows for automatic modifications, enhancing resource configurations on-the-fly.
+
 Now let's test the mutation policy. Check the file `mutation_policy.yaml`. Notice that we will check to see if there is a `team` label. If there isn't, we will add a `team` label to the Deployment.
 
 Check the `redis.yaml` file. It doesn't have a label yet.
@@ -217,3 +221,60 @@ newredis   1/1     Running   0          63s   team=alpha
 
 ## Generation
 
+Kyverno empowers users to dynamically create new Kubernetes resources by leveraging definitions embedded within policies.
+
+Let's see it in action. Check the `registry_secret.yaml` file for a K8s secret that simulates a real image pull secret.
+
+Apply the secret:
+
+```bash
+kubectl apply -f registry_secret.yaml
+```
+
+Now apply the following Kyverno policy in the file `registry_secret_policy.yaml`:
+
+```bash
+kubectl apply -f registry_secret_policy.yaml
+```
+
+Establish a fresh Namespace for policy evaluation:
+
+```bash
+kubectl create ns mytestns
+```
+
+Inspect the Secrets within this newly created Namespace to verify the presence of regcred:
+
+```bash
+kubectl -n mytestns get secret
+```
+
+Output:
+```bash
+NAME      TYPE                             DATA   AGE
+regcred   kubernetes.io/dockerconfigjson   1      5s
+```
+
+Observe how Kyverno has dynamically generated the regcred Secret in the new Namespace, using the source Secret from the default Namespace as a template. Feel free to modify the source Secret and witness Kyverno's synchronization capabilities as it propagates changes to all generated instances.
+
+
+## Cleanup
+
+To clean up the resources created in this lab, run the following commands:
+
+```bash
+kubectl delete ns kyverno-policy-tests
+kubectl delete ns mytestns
+kubectl delete -f registry_secret_policy.yaml
+kubectl delete -f mutation_policy.yaml
+kubectl delete -f validation_policy.yaml
+```
+
+## Conclusion
+Great job! You've implemented Kyverno's key policy types:
+
+**Validation:** Ensuring cluster compliance
+**Mutation:** Dynamically modifying resources
+**Generation:** Automating resource creation
+
+With these powerful tools at your disposal, you're well-equipped to maintain a robust, secure, and efficient cluster. 

@@ -2,6 +2,23 @@
 
 This is a demo repo for Kyverno.
 
+
+<!-- @import "[TOC]" {cmd="toc" depthFrom=1 depthTo=6 orderedList=false} -->
+
+<!-- code_chunk_output -->
+
+- [Overview](#overview)
+  - [Install Kyverno](#install-kyverno)
+  - [Validation](#validation)
+  - [Mutation](#mutation)
+  - [Generation](#generation)
+  - [Cleanup](#cleanup)
+  - [Conclusion](#conclusion)
+
+<!-- /code_chunk_output -->
+
+
+
 ## Install Kyverno
 
 ```bash
